@@ -13,7 +13,7 @@ userRouter.get(
 
 //route to update details of a user 
 userRouter.put(
-  "/:username/update-details",
+  "/update-profile",
   passport.authenticate("jwt", {
     session: false,
   }),

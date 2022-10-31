@@ -24,6 +24,7 @@ const userDetailsUpdate = async (req, res, next) => {
       { $set: userDetails },
       { new: true }
     );
+    res.status(200).json({ user });
   } catch (err) {
     next(err);
   }
