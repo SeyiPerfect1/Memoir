@@ -18,10 +18,16 @@ const userProfile = async (req, res, next) => {
 
 const userDetailsUpdate = async (req, res, next) => {
   const userDetails = req.body;
+  const newDetails = {};
+  for (const detail in userDetails) {
+    if (detail != "email" && detail != "password") {
+      newDetails[detail] = userDetails[detail];
+    }
+  }
   try {
     const user = await User.findOneAndUpdate(
       { email: req.user.email },
-      { $set: userDetails },
+      { $set: newDetails },
       { new: true }
     );
     res.status(200).json({ user });
