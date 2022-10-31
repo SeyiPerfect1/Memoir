@@ -18,6 +18,9 @@ const userProfile = async (req, res, next) => {
 
 const userDetailsUpdate = async (req, res, next) => {
   const userDetails = req.body;
+  //take in user's new update and add it to a new object
+  //exclude password and email in case the user added it as input
+  //password and email update require special methods
   const newDetails = {};
   for (const detail in userDetails) {
     if (detail != "email" && detail != "password") {
