@@ -1,0 +1,89 @@
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const Schema = mongoose.Schema;
+
+//Define user Schema
+const UserSchema = new Schema(
+  {
+    firstname: {
+      type: String,
+      required: true,
+    },
+    lastname: {
+      type: String,
+      required: true,
+    },
+    username: {
+      type: String,
+      unique: [true, "username already exist!!!"],
+      min: [3, "username cannot be lesser than 3characters, got {value}"],
+      max: [15, "username cannot be more than 15characters, got {value}"],
+    },
+    email: {
+      type: String,
+      required: [true, "email is required"],
+      unique: [true, "user already exists!!!"],
+      match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/],
+    },
+    password: {
+      type: String,
+      required: true,
+      match: [
+        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,1024}$/,
+        "password must contain, at least a capital letter, at least a small letter, at must be at least 8 characters long",
+      ],
+    },
+    lastlogin: {
+      type: Date,
+    },
+    intro: {
+      //The brief introduction of the Author to be displayed on each post
+      type: String,
+      max: 255,
+    },
+    profilePicture: {
+      type: String,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  {
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        delete ret._id;
+        delete ret.id;
+        delete ret.password;
+        delete ret.__v;
+        return ret;
+      },
+    },
+  }
+);
+
+//function to save the password beefore saving to the
+UserSchema.pre("save", async function (next) {
+  const user = this;
+  const hash = await bcrypt.hash(this.password, 10);
+
+  this.password = hash;
+  next();
+});
+
+// user trying to log in has the correct credentials.
+UserSchema.methods.isValidPassword = async function (password) {
+  const user = this;
+  const compare = await bcrypt.compare(password, user.password);
+
+  return compare;
+};
+
+const User = mongoose.model("users", UserSchema);
+
+module.exports = User;
