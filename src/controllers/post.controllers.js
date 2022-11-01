@@ -1,7 +1,9 @@
 const Post = require("../models/post.models");
 const dayjs = require("dayjs");
+const readingTime = require("../utils/reading_time");
 
-const getPost = async (req, res, next) => {
+//function to get posts
+const getPosts = async (req, res, next) => {
   const { page, limit, order_by, tags, title, author, start, end } = req.query;
 
   const findQuery = [];
@@ -67,7 +69,24 @@ const getPost = async (req, res, next) => {
   }
 };
 
+//function to create post
+const createPost = async (req, res, next) => {
+  const post = req.body;
+  //calculate reading time
+  const reading_time = readingTime(post.body);
+  post[readingTime] = reading_time;
+
+  try {
+    await Post.create({ post });
+    res.status(201).json({
+      message: "post created successfully",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
 module.exports = {
-    getPost
-}
+  getPosts,
+  createPost,
+};
