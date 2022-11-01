@@ -1,4 +1,5 @@
 const Post = require("../models/post.models");
+const User = require("../models/user.models");
 const dayjs = require("dayjs");
 const readingTime = require("../utils/reading_time");
 
@@ -57,10 +58,12 @@ const getPosts = async (req, res, next) => {
   }
 
   try {
+    //check if only one else set agrregation pipeline to achieve and filtering
     const post = await Post.find({ $or: findQuery, state: published })
       .skip(page * limit || page * 20)
       .limit(limit || 20)
-      .sort({ sortQuery } || { publishedAt: -1 });
+      .sort({ sortQuery } || { publishedAt: -1 })
+      .select({ __v: false });
     res.status(200).json({
       message: post,
     });
@@ -71,13 +74,25 @@ const getPosts = async (req, res, next) => {
 
 //function to create post
 const createPost = async (req, res, next) => {
-  const post = req.body;
+  //seperate tags(coming as strings) into the
+  req.body.tags = req.body.tags.replace(/\s/g, "").split(",");
+  const newPost = req.body;
+
   //calculate reading time
-  const reading_time = readingTime(post.body);
-  post[readingTime] = reading_time;
+  const reading_time = await readingTime(newPost.body);
+  newPost.readingTime = reading_time;
 
   try {
-    await Post.create({ post });
+    const postCreatedBy = await User.findOne({ _id: req.user._id }).select({
+      password: false,
+      __v: false,
+    });
+    newPost.author = postCreatedBy;
+    await Post.create(newPost);
+    // const newUser = await User.updateOne(
+    //   { _id: req.user._id },
+    //   { $set: { posts: post._id } }
+    // );
     res.status(201).json({
       message: "post created successfully",
     });

@@ -18,6 +18,7 @@ const UserSchema = new Schema(
       unique: [true, "username already exist!!!"],
       min: [3, "username cannot be lesser than 3characters, got {value}"],
       max: [15, "username cannot be more than 15characters, got {value}"],
+      required: true,
     },
     email: {
       type: String,
@@ -33,9 +34,9 @@ const UserSchema = new Schema(
         "password must contain, at least a capital letter, at least a small letter, at must be at least 8 characters long",
       ],
     },
-    lastlogin: {
-      type: Date,
-    },
+    // lastlogin: {
+    //   type: Date,
+    // },
     intro: {
       //The brief introduction of the Author to be displayed on each post
       type: String,
@@ -44,6 +45,10 @@ const UserSchema = new Schema(
     profilePicture: {
       type: String,
     },
+    // posts: {
+    //   type: Schema.Types.ObjectId,
+    //   ref: "Posts",
+    // },
     createdAt: {
       type: Date,
       default: Date.now,
@@ -53,18 +58,19 @@ const UserSchema = new Schema(
       default: Date.now,
     },
   },
-  {
-    toJSON: {
-      virtuals: true,
-      transform: function (doc, ret) {
-        delete ret._id;
-        delete ret.id;
-        delete ret.password;
-        delete ret.__v;
-        return ret;
-      },
-    },
-  }
+  // {
+  //   toJSON: {
+  //     virtuals: true,
+  //     transform: function (doc, ret) {
+  //       // delete ret._id;
+  //       ret.id = ret._id;
+  //       delete ret.id;
+  //       delete ret.password;
+  //       delete ret.__v;
+  //       return ret;
+  //     },
+  //   },
+  // }
 );
 
 //function to save the password beefore saving to the

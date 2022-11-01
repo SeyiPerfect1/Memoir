@@ -1,19 +1,15 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+require("../models/user.models")
 const slug = require("mongoose-slug-generator");
-(options = {
+const options = {
   separator: "-",
   truncate: 120,
-}),
+};
   mongoose.plugin(slug, options);
 
 const PostSchema = new Schema({
-  author: {
-    type: Schema.Types.ObjectId,
-    ref: "Users",
-    required: true
-  },
-
+  author: {},
   title: {
     type: String,
     max: 75,
@@ -33,7 +29,7 @@ const PostSchema = new Schema({
     default: 0,
   },
   readingTime: {
-    type: Number,
+    type: String,
     required: true
   },
   state: {
@@ -46,9 +42,16 @@ const PostSchema = new Schema({
   },
   slug: {
     type: String,
-    slug: "title",
+    slug: ["title", "_id"],
     unique: true,
   },
 });
 
 module.exports = mongoose.model("Posts", PostSchema);
+// schema.pre('save', function (next, req) {
+//   var Doctors = mongoose.model('Doctors'); //--> add this line
+//   Doctors.findOne({email:req.body.email}, function (err, found) {
+//     if (found) return next();
+//     else return next(new Error({error:"not found"}));
+//   });
+// });
