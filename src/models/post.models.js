@@ -11,24 +11,22 @@ const PostSchema = new Schema({
   author: {
     type: Schema.Types.ObjectId,
     ref: "Users",
+    required: true
   },
 
   title: {
     type: String,
     max: 75,
+    required: true
   },
   description: {
     type: String,
     max: 255,
   },
   tags: [String],
-  category: [
-    {
-      type: String,
-    },
-  ],
   body: {
     type: String,
+    required: true
   },
   readCount: {
     type: Number,
@@ -36,6 +34,7 @@ const PostSchema = new Schema({
   },
   readingTime: {
     type: Number,
+    required: true
   },
   state: {
     type: String,
