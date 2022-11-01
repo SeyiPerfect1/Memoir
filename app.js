@@ -1,17 +1,17 @@
 const express = require("express");
 const logger = require("morgan");
 const path = require("path");
-const bodyParser = require('body-parser');
-const passport = require('passport');
+const bodyParser = require("body-parser");
+const passport = require("passport");
 
 const authRouter = require("./src/routes/auth.routes");
 const userRouter = require("./src/routes/user.routes");
+const postRouter = rerquire("./src/routes/post.routes.js");
 
 const app = express();
 
-
 //use passport middleware
-require('./src/middlewares/auth');
+require("./src/middlewares/auth");
 
 //security middleware
 // app.use(helmet());
@@ -30,17 +30,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 app.set("views", "views");
 
-
 //add routes
 app.use("/accounts", authRouter);
-app.use('/', userRouter);
+app.use("/", userRouter);
+app.use("/posts", postRouter);
 
-//homepage
-app.get('/', (req, res) => {
+//homepage route
+app.get("/", (req, res) => {
   res.status(200).json({
-    message: "welcome home"
-  })
-})
+    message: "welcome home",
+  });
+});
 
 //unavailable resources route
 app.get("*", (req, res) => {

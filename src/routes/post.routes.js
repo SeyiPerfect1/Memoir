@@ -11,3 +11,5 @@ postRouter.post(
   passport.authenticate("jwt", { session: false }),
   postController.createPost
 );
+
+module.exports = postRouter;

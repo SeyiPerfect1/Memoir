@@ -27,6 +27,7 @@ const userDetailsUpdate = async (req, res, next) => {
       newDetails[detail] = userDetails[detail];
     }
   }
+  newDetails.updatedAt = Date.now();
   try {
     const user = await User.findOneAndUpdate(
       { email: req.user.email },
