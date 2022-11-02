@@ -5,19 +5,25 @@ const readingTime = require("../utils/reading_time");
 
 //function to get posts
 const getPosts = async (req, res, next) => {
-  const { page, limit, order_by, tags, title, author, start, end } = req.query;
+  const { pageNo, limit, order_by, tags, title, author, start, end } = req.query;
+    
+  const page = pageNo-1 || 0;
 
   const findQuery = [];
+  if(!author&&!title&&!tags){
+    findQuery.push({})
+  }
   if (author) {
     findQuery.push({ author: author.username });
   }
 
   if (title) {
-    findQuery.push({ title: title });
+    findQuery.push({ title : { $regex: `${title}`, $options: 'i' }});
   }
 
   if (tags) {
-    const tagQuery = tags.split("+");
+    const tagQuery = tags.split(" ");
+    console.log(tagQuery)
     findQuery.push({ tags: { $in: tagQuery } });
   }
 
@@ -40,13 +46,13 @@ const getPosts = async (req, res, next) => {
   //where "," separates the sort attributes
   //while "+" separtes the field used for the sort and the sorting value
   if (order_by) {
-    const sortQuery = {};
+    const sortQuery = { publishedAt: -1 };
 
     const sortAttributes = order_by.split(",");
-
+    console.log(sortAttributes)
     for (const attribute of sortAttributes) {
-      const sortField = attribute.split("+")[0];
-      const sortValue = attribute.split("+")[1];
+      const sortField = attribute.split(" ")[0];
+      const sortValue = attribute.split(" ")[1];
       if (sortValue === "asc") {
         sortQuery[sortField] = 1;
       }
@@ -55,16 +61,18 @@ const getPosts = async (req, res, next) => {
         sortQuery[sortField] = -1;
       }
     }
+    console.log(sortQuery)
   }
 
   try {
     //check if only one else set agrregation pipeline to achieve and filtering
-    const post = await Post.find({ $or: findQuery, state: published })
+    const post = await Post.find({ $or: findQuery, state: "published" })
       .skip(page * limit || page * 20)
       .limit(limit || 20)
-      .sort({ sortQuery } || { publishedAt: -1 })
-      .select({ __v: false });
+      // .sort(sortQuery)
+      // .select({ __v: false });
     res.status(200).json({
+      result: `${post.length} result(s) found`,
       message: post,
     });
   } catch (err) {
@@ -72,9 +80,9 @@ const getPosts = async (req, res, next) => {
   }
 };
 
-//function to create post
+//function to create new post
 const createPost = async (req, res, next) => {
-  //seperate tags(coming as strings) into the
+  //seperate tags(coming as strings) into array
   req.body.tags = req.body.tags.replace(/\s/g, "").split(",");
   const newPost = req.body;
 
