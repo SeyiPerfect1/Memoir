@@ -1,19 +1,19 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-require("../models/user.models")
+require("../models/user.models");
 const slug = require("mongoose-slug-generator");
 const options = {
   separator: "-",
   truncate: 120,
 };
-  mongoose.plugin(slug, options);
+mongoose.plugin(slug, options);
 
 const PostSchema = new Schema({
   author: {},
   title: {
     type: String,
     max: 75,
-    required: true
+    required: true,
   },
   description: {
     type: String,
@@ -22,7 +22,7 @@ const PostSchema = new Schema({
   tags: [String],
   body: {
     type: String,
-    required: true
+    required: true,
   },
   readCount: {
     type: Number,
@@ -30,7 +30,7 @@ const PostSchema = new Schema({
   },
   readingTime: {
     type: String,
-    required: true
+    required: true,
   },
   state: {
     type: String,
@@ -45,6 +45,16 @@ const PostSchema = new Schema({
     slug: ["title", "_id"],
     unique: true,
   },
+});
+//index to fields that are not unique but will be used for ordering  for querying 
+PostSchema.index({
+  "author.username": 1,
+  title: 1,
+  tags: 1,
+  readCount: 1,
+  readingTime: 1,
+  state: 1,
+  publishedAt: 1,
 });
 
 module.exports = mongoose.model("Posts", PostSchema);
