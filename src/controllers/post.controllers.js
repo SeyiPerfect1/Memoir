@@ -14,7 +14,7 @@ const getPosts = async (req, res, next) => {
     findQuery.push({})
   }
   if (author) {
-    findQuery.push({ author: author.username });
+    findQuery.push({ "author.username": author });
   }
 
   if (title) {
