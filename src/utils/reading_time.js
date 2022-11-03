@@ -2,7 +2,7 @@
 const readingTime = async (post) => {
   const wordCount = post.split(" ").length;
   const totalTime = (wordCount * 1) / 130;
-  return `${ Math.round(totalTime) } min`;
+  return `${ Math.ceil(totalTime) } min`;
 };
 
 module.exports = readingTime;

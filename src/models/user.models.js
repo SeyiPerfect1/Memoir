@@ -58,19 +58,18 @@ const UserSchema = new Schema(
       default: Date.now,
     },
   },
-  // {
-  //   toJSON: {
-  //     virtuals: true,
-  //     transform: function (doc, ret) {
-  //       // delete ret._id;
-  //       ret.id = ret._id;
-  //       delete ret.id;
-  //       delete ret.password;
-  //       delete ret.__v;
-  //       return ret;
-  //     },
-  //   },
-  // }
+  {
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        ret.id = ret._id;
+        delete ret.id;
+        delete ret.password;
+        delete ret.__v;
+        return ret;
+      },
+    },
+  }
 );
 
 //function to save the password beefore saving to the

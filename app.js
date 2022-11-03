@@ -32,8 +32,8 @@ app.set("views", "views");
 
 //add routes
 app.use("/accounts", authRouter);
-app.use("/", userRouter);
 app.use("/posts", postRouter);
+app.use("/", userRouter);
 
 //homepage route
 app.get("/", (req, res) => {

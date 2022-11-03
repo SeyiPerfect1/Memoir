@@ -45,6 +45,14 @@ const PostSchema = new Schema({
     slug: ["title", "_id"],
     unique: true,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 //index to fields that are not unique but will be used for ordering  for querying 
 PostSchema.index({
