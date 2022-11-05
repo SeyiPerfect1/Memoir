@@ -9,7 +9,10 @@ const options = {
 mongoose.plugin(slug, options);
 
 const PostSchema = new Schema({
-  author: {},
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: "Users",
+  },
   title: {
     type: String,
     max: 75,
@@ -54,7 +57,7 @@ const PostSchema = new Schema({
     default: Date.now,
   },
 });
-//index to fields that are not unique but will be used for ordering  for querying 
+//index to fields that are not unique but will be used for ordering  for querying
 PostSchema.index({
   "author.username": 1,
   title: 1,
@@ -65,11 +68,11 @@ PostSchema.index({
   publishedAt: 1,
 });
 
+PostSchema.pre("save", function (next) {
+  if (!this.description) {
+    this.description = this.get("title");
+  }
+  next();
+});
+
 module.exports = mongoose.model("Posts", PostSchema);
-// schema.pre('save', function (next, req) {
-//   var Doctors = mongoose.model('Doctors'); //--> add this line
-//   Doctors.findOne({email:req.body.email}, function (err, found) {
-//     if (found) return next();
-//     else return next(new Error({error:"not found"}));
-//   });
-// });

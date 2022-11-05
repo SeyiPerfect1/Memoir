@@ -34,21 +34,20 @@ const UserSchema = new Schema(
         "password must contain, at least a capital letter, at least a small letter, at must be at least 8 characters long",
       ],
     },
-    // lastlogin: {
-    //   type: Date,
-    // },
     intro: {
-      //The brief introduction of the Author to be displayed on each post
+      //brief introduction of the Author to be displayed on each post
       type: String,
       max: 255,
     },
-    profilePicture: {
+    urlToImage: {
       type: String,
     },
-    // posts: {
-    //   type: Schema.Types.ObjectId,
-    //   ref: "Posts",
-    // },
+    posts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Posts",
+      },
+    ],
     createdAt: {
       type: Date,
       default: Date.now,
