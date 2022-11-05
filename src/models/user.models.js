@@ -70,6 +70,9 @@ const UserSchema = new Schema(
     },
   }
 );
+PostSchema.index({
+  posts: 1
+})
 
 //method to hash password beefore saving to database
 UserSchema.pre("save", async function (next) {

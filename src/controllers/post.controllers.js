@@ -47,7 +47,7 @@ const getPosts = async (req, res, next) => {
     const startDate = dayjs(start).format("YYYY-MM-DD");
     const endDate = dayjs(end).format("YYYY-MM-DD");
     findQuery.push({
-      publishedAt: {
+      "publishedAt": {
         $gt: dayjs(startDate).startOf("day"),
         $lt: moment(endDate).endOf("day"),
       },
@@ -75,8 +75,8 @@ const getPosts = async (req, res, next) => {
       }
     }
   }
-  if (!publishedAt) {
-    sortQuery.publishedAt = -1;
+  if (!publishedTime || publishedTime=) {
+    sortQuery.publishedTime = -1;
   }
 
   try {

@@ -59,7 +59,7 @@ const PostSchema = new Schema({
 });
 //index to fields that are not unique but will be used for ordering  for querying
 PostSchema.index({
-  "author.username": 1,
+  author: 1,
   title: 1,
   tags: 1,
   readCount: 1,
