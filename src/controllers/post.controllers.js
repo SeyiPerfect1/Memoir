@@ -124,6 +124,32 @@ const createPost = async (req, res, next) => {
   }
 };
 
+const updatePost = async (req, res, next) => {
+  const { slug } = req.query;
+  //seperate tags(coming as strings) into array
+  req.body.tags = req.body.tags.replace(/\s/g, "").split(",");
+  const updatedPost = req.body;
+
+  //calculate reading time
+  const reading_time = await readingTime(newPost.body);
+  updatedPost.readingTime = reading_time;
+  try {
+    const post = Post.findOne({ slug: slug });
+    if (post.auhtor.email === req.user.email) {
+      await User.updateOne({ slug: post.slug }, { $set: { updatedPost } });
+      res.status(200).json({
+        message: "post updated successfully",
+      });
+    } else {
+      res.status(401).json({
+        message: "user is not the owner of post, user cannot update it",
+      });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getPosts,
   createPost,

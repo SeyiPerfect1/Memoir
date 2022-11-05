@@ -71,9 +71,14 @@ const UserSchema = new Schema(
   }
 );
 
-//function to save the password beefore saving to the
+//method to hash password beefore saving to database
 UserSchema.pre("save", async function (next) {
   const user = this;
+
+  //if password is modified, do nothing
+  if(!user.isModified("password")) return next();
+
+  //hash password
   const hash = await bcrypt.hash(this.password, 10);
 
   this.password = hash;
