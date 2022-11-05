@@ -70,7 +70,7 @@ const UserSchema = new Schema(
     },
   }
 );
-PostSchema.index({
+UserSchema.index({
   posts: 1
 })
 

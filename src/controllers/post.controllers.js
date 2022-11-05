@@ -57,7 +57,7 @@ const getPosts = async (req, res, next) => {
   //sorting posts according to sort query given in query parameter
   //by default, each query is sorted by publishedDate in descending order
   //A sample url pattern for the sort query is:
-  //http://myapp.com/books?sort=author+asc,datepublished+desc&count=12
+  //http://myapp.com/books?sort=author+asc,datePublished+desc&count=12
   //where "," separates the sort attributes
   //while "+" separtes the field used for the sort and the sorting value
   const sortQuery = {};
@@ -74,10 +74,12 @@ const getPosts = async (req, res, next) => {
         sortQuery[sortField] = -1;
       }
     }
+
+    if (!sortAttributes.includes("datePublished")) {
+      sortQuery.dataPublished = -1;
+    }
   }
-  if (!publishedTime || publishedTime=) {
-    sortQuery.publishedTime = -1;
-  }
+  
 
   try {
     //check if only one else set agrregation pipeline to achieve and filtering
