@@ -22,8 +22,10 @@ const getPosts = async (req, res, next) => {
   //if author is provided as a query params
   //set the query in an object and push into the findquery array
   if (author) {
-    findQuery.push({ "author.username": author });
+    const userDetails = await User.findOne({ username: author})
+    findQuery.push({ author: userDetails._id });
   }
+  console.log(findQuery)
   //if title is provided as a query params
   //set the query to match the title as a regex in an object
   //and push into the findquery array
@@ -146,4 +148,5 @@ const updatePost = async (req, res, next) => {
 module.exports = {
   getPosts,
   createPost,
+  updatePost,
 };
