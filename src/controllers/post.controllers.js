@@ -36,7 +36,6 @@ const getPosts = async (req, res, next) => {
   //tags should be separated by space or mysql standard '+' in the url
   if (tags) {
     const tagQuery = tags.split(" ");
-    console.log(tagQuery);
     findQuery.push({ tags: { $in: tagQuery } });
   }
 
@@ -47,7 +46,7 @@ const getPosts = async (req, res, next) => {
     const startDate = dayjs(start).format("YYYY-MM-DD");
     const endDate = dayjs(end).format("YYYY-MM-DD");
     findQuery.push({
-      "publishedAt": {
+      publishedAt: {
         $gt: dayjs(startDate).startOf("day"),
         $lt: moment(endDate).endOf("day"),
       },
@@ -79,7 +78,6 @@ const getPosts = async (req, res, next) => {
       sortQuery.dataPublished = -1;
     }
   }
-  
 
   try {
     //check if only one else set agrregation pipeline to achieve and filtering
@@ -108,16 +106,9 @@ const createPost = async (req, res, next) => {
   newPost.readingTime = reading_time;
 
   try {
-    const postCreatedBy = await User.findOne({ _id: req.user._id }).select({
-      password: false,
-      __v: false,
-    });
-    newPost.author = postCreatedBy;
-    await Post.create(newPost);
-    // const newUser = await User.updateOne(
-    //   { _id: req.user._id },
-    //   { $set: { posts: post._id } }
-    // );
+    newPost.author = req.user._id;
+    const post = await Post.create(newPost);
+    await User.updateOne({ _id: req.user._id }, { $push: { posts: post } });
     res.status(201).json({
       message: "post created successfully",
     });
