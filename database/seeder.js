@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 const { connectToMongoDB } = require("../src/config/dbConfig");
+require("dotenv").config();
 mongoose.Promise = require("bluebird");
 mongoose.connect(
-  "mongodb+srv://Oluperfect1:Oluperfect1@cluster0.nljyju0.mongodb.net/Memoir?retryWrites=true&w=majority"
+  process.env.MONGODB_URI
 );
 // const posts = require("./stubs/posts");
 const users = require("./stubs/users");

@@ -3,6 +3,26 @@ const User = require("../models/user.models");
 const dayjs = require("dayjs");
 const readingTime = require("../utils/reading_time");
 
+
+//function to get a specific post
+const getPost = async (req, res, next) => {
+  const { slug, id } = req.params;
+  try {
+    const post = await Post.findOne(
+      { $or: [ { id: id }, { slug: slug}] }
+    );
+    console.log(post)
+    post.readCount = post.readCount+1;
+    await post.save()
+    
+    res.status(200).json({
+      message: post,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 //function to get posts
 const getPosts = async (req, res, next) => {
   //destructure query parameters
@@ -22,10 +42,10 @@ const getPosts = async (req, res, next) => {
   //if author is provided as a query params
   //set the query in an object and push into the findquery array
   if (author) {
-    const userDetails = await User.findOne({ username: author})
-    findQuery.push({ author: userDetails._id });
+    const userDetails = await User.findOne({ username: author });
+    findQuery.push({ author: userDetails.username });
   }
-  console.log(findQuery)
+
   //if title is provided as a query params
   //set the query to match the title as a regex in an object
   //and push into the findquery array
@@ -99,9 +119,11 @@ const getPosts = async (req, res, next) => {
 
 //function to create new post
 const createPost = async (req, res, next) => {
-  //seperate tags(coming as strings) into array
-  req.body.tags = req.body.tags.replace(/\s/g, "").split(",");
   const newPost = req.body;
+
+  //seperate tags(coming as strings) into array
+  const tags = req.body.tags.replace(/\s/g, "").split(",");
+  newPost.tags = tags;
 
   //calculate reading time
   const reading_time = await readingTime(newPost.body);
@@ -119,27 +141,48 @@ const createPost = async (req, res, next) => {
   }
 };
 
+//function to update post
 const updatePost = async (req, res, next) => {
-  const { slug } = req.query;
+  const { slug, id } = req.query;
+  const newPost = req.body;
+
   //seperate tags(coming as strings) into array
-  req.body.tags = req.body.tags.replace(/\s/g, "").split(",");
-  const updatedPost = req.body;
+  const tags = req.body.tags.replace(/\s/g, "").split(",");
+  newPost.tags = tags;
 
   //calculate reading time
-  const reading_time = await readingTime(newPost.body);
-  updatedPost.readingTime = reading_time;
-  try {
-    const post = Post.findOne({ slug: slug });
-    if (post.auhtor.email === req.user.email) {
-      await User.updateOne({ slug: post.slug }, { $set: { updatedPost } });
-      res.status(200).json({
-        message: "post updated successfully",
-      });
-    } else {
-      res.status(401).json({
-        message: "user is not the owner of post, user cannot update it",
-      });
+  if (newPost.body) {
+    const reading_time = await readingTime(newPost.body);
+    newPost.readingTime = reading_time;
+  }
+
+  if (newPost["state"] !== undefined) {
+    if (newPost["state"] === "draft") {
+      newPost["publishedAt"] = Date.now();
     }
+  }
+
+  let query = [];
+  if (slug) {
+    query.push({ slug: slug });
+  }
+  if (id) {
+    query.push({ _id: id });
+  }
+
+  try {
+    await Post.updateOne(
+      { $or: { slug: slug, _id: id } },
+      { $set: { newPost } }
+    );
+    res.status(200).json({
+      message: "post updated successfully",
+    });
+    // else {
+    //   res.status(401).json({
+    //     message: "user is not the owner of post, user cannot update it",
+    //   });
+    // }
   } catch (err) {
     next(err);
   }
@@ -149,4 +192,5 @@ module.exports = {
   getPosts,
   createPost,
   updatePost,
+  getPost,
 };

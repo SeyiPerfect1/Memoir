@@ -4,7 +4,10 @@ const User = require("../models/user.models");
 const userProfile = async (req, res, next) => {
   const { username } = req.params;
   try {
-    const user = await User.findOne({ username: username }).select({ password: false,  __v: false });
+    const user = await User.findOne({ username: username }).select({
+      password: false,
+      __v: false,
+    });
     if (!user) {
       res.status(404).json({
         message: "user not found",
@@ -33,7 +36,7 @@ const userDetailsUpdate = async (req, res, next) => {
       { email: req.user.email },
       { $set: newDetails },
       { new: true }
-    ).select({ password: false,  __v: false });
+    ).select({ password: false, __v: false });
     res.status(200).json({ user });
   } catch (err) {
     next(err);
