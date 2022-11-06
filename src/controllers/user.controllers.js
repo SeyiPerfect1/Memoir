@@ -3,6 +3,7 @@ const Post = require("../models/post.models");
 
 //function to retrieve details of a specific user
 const getUserDetails = async (req, res, next) => {
+  const { state } = req.query;
   const { username } = req.params;
   try {
     const user = await User.findOne({ username: username }).select({
@@ -19,9 +20,13 @@ const getUserDetails = async (req, res, next) => {
     }
 
     if (user.email === req.user.email) {
-      const posts = await Post.find({ "author.username": username });
+      const filter = { "author.username": username };
+      if (state) {
+        filter.state = state;
+      }
+      console.log(filter);
+      const posts = await Post.find(filter);
       res.status(200).json({
-        user: user,
         message: `${username} has ${posts.length} post(s)`,
         post: posts,
       });
@@ -31,7 +36,6 @@ const getUserDetails = async (req, res, next) => {
         state: "published",
       });
       res.status(200).json({
-        user: user,
         message: `${username} has ${posts.length} post(s)`,
         post: posts,
       });
@@ -59,7 +63,9 @@ const updateUser = async (req, res, next) => {
       { $set: newDetails },
       { new: true }
     ).select({ password: false, __v: false });
-    res.status(200).json({ user });
+    res.status(200).json({
+      message: "user details updated successfully",
+    });
   } catch (err) {
     next(err);
   }
