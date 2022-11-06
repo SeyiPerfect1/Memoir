@@ -4,15 +4,23 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
 ## Requirements <br>
  1. User should be able to register
  2. User should be able to login with Passport using JWT
- 3. Implement basic auth
- 4. User should be able to get orders
- 5. Users should be able to create orders
- 6. Users should be able to update and delete orders
- 7. Test application  <hr/>
+ 3. Token expiration should be 1hour
+ 4. Implement basic auth
+ 5. Logged in and not Logged in User should be able to get published posts
+ 6. Queried posts should be paginated to default of 20 posts per page
+ 7. The owner of the blog should be able to update post's state from draft to published
+ 8. posts should be searchable byauthor, title and tags
+ 9. Posts should be orderable by read count, reading time and timestamp
+ 10. Logged in and not Logged in User should be able to get a published post
+ 11. Logged in Users should be able to create post, update and delete posts
+ 12. Logged In users should be able to get their post(s) in draft or published state
+ 13. Should implement algorithm for calculating reading time
+ 14. Test application  <hr/>
 ## Setup <br>
  * Install NodeJS, MongoDB
  * pull this repo
  * update env with example.env
+ * Download all dependecies using npm install
  * run npm run start <hr>
 ## Base URL
  * [Link to api]() <hr>
@@ -237,9 +245,10 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
    "message": "post deleted successfully",
  }
  ```
- ### Get User Post(s) and Details
+ ### Get User's Post(s) and Details
  *//shows only published posts of req.user!=logged in user*
- *//shows both published and dradt posts if req.user === logged in user*
+ *//shows both published and draft posts if req.user === logged in user*
+ *//?state=published to filter user posts by state*
  * Route: /:username
  * Method: GET
  * Header
