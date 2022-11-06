@@ -124,6 +124,10 @@ const getPost = async (req, res, next) => {
       res.status(200).json({
         message: post,
       });
+    } else if (post.state === "drafts") {
+      res.status(200).json({
+        message: "post not found",
+      });
     } else if (post.author.email === req.user.email) {
       res.status(200).json({
         message: post,
@@ -172,7 +176,9 @@ const createPost = async (req, res, next) => {
     res.status(201).json({
       message: "post created successfully",
       title: post.title,
-      slug: post.slug
+      description: post.description,
+      tags: post.tags,
+      slug: post.slug,
     });
   } catch (err) {
     next(err);
@@ -195,10 +201,10 @@ const updatePost = async (req, res, next) => {
   if (postUpdate.readingTime) {
     delete postUpdate.readingTime;
   }
-//check if update consists of changing state to pushided.
-//if true, add publishedAt
-  if(postUpdate.state === "published"){
-    postUpdate.publishedAt = Date.now()
+  //check if update consists of changing state to pushided.
+  //if true, add publishedAt
+  if (postUpdate.state === "published") {
+    postUpdate.publishedAt = Date.now();
   }
 
   //calculate reading time
@@ -218,7 +224,7 @@ const updatePost = async (req, res, next) => {
     } else {
       res.status(401).json({
         message: "user is not the owner of post, user cannot update post",
-        publishedAt: post.publishedAt
+        publishedAt: post.publishedAt,
       });
     }
   } catch (err) {
