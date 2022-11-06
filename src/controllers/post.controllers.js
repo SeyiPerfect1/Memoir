@@ -62,7 +62,7 @@ const getPosts = async (req, res, next) => {
   //sorting posts according to sort query given in query parameter
   //by default, each query is sorted by publishedDate in descending order
   //A sample url pattern for the sort query is:
-  //http://myapp.com/books?sort=author+asc,datePublished+desc&count=12
+  //http://myapp.com/books?author+asc&datePublished+desc&title=loremipsum
   //where "," separates the sort attributes
   //while "+" separtes the field used for the sort and the sorting value
   const sortQuery = {};
@@ -171,6 +171,8 @@ const createPost = async (req, res, next) => {
     await User.updateOne({ _id: req.user._id }, { $push: { posts: post } });
     res.status(201).json({
       message: "post created successfully",
+      title: post.title,
+      slug: post.slug
     });
   } catch (err) {
     next(err);
@@ -195,7 +197,7 @@ const updatePost = async (req, res, next) => {
   }
 //check if update consists of changing state to pushided.
 //if true, add publishedAt
-  if(postUpdate.publishedAt === "published"){
+  if(postUpdate.state === "published"){
     postUpdate.publishedAt = Date.now()
   }
 
@@ -216,6 +218,7 @@ const updatePost = async (req, res, next) => {
     } else {
       res.status(401).json({
         message: "user is not the owner of post, user cannot update post",
+        publishedAt: post.publishedAt
       });
     }
   } catch (err) {
