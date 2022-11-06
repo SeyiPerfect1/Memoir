@@ -61,9 +61,10 @@ passport.use(
       passwordField: "password",
     },
     async (email, password, done) => {
+      email = email.toLowerCase();
+
       try {
         const user = await User.findOne({ email });
-
         if (!user) {
           return done(null, false, { message: "User not found" });
         }
