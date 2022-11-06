@@ -2,9 +2,7 @@ const mongoose = require("mongoose");
 const { connectToMongoDB } = require("../src/config/dbConfig");
 require("dotenv").config();
 mongoose.Promise = require("bluebird");
-mongoose.connect(
-  process.env.MONGODB_URI
-);
+mongoose.connect(process.env.MONGODB_URI);
 // const posts = require("./stubs/posts");
 // const users = require("./stubs/users");
 

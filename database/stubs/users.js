@@ -1,7 +1,7 @@
 const { isObjectIdOrHexString } = require("mongoose");
 
 const users = [
-  { 
+  {
     _id: ObjectId("6367116e679244141511f084"),
     firstname: "userA",
     lastname: "userZ",
@@ -49,7 +49,8 @@ const users = [
     createdAt: Date.now(),
     updatedAt: Date.now(),
   },
-  {  _id: ObjectId("6367116e679244141511f089"),
+  {
+    _id: ObjectId("6367116e679244141511f089"),
     firstname: "userF",
     lastname: "userU",
     username: "user6",
