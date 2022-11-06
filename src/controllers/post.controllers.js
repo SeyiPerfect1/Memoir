@@ -113,13 +113,18 @@ const getPost = async (req, res, next) => {
   const { slug } = req.params;
   try {
     const post = await Post.findOne({ slug: slug });
+    if (!post){
+      res.json({
+        message: "post not found"
+      })
+    }
     post.readCount = post.readCount + 1;
     await post.save();
     if (post.state === "published") {
       res.status(200).json({
         message: post,
       });
-    } else if (post.author._id === req.user._id) {
+    } else if (post.author.email === req.user.email) {
       res.status(200).json({
         message: post,
       });
