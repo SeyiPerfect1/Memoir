@@ -162,10 +162,10 @@ const createPost = async (req, res, next) => {
     const user = await User.findOne({ email: req.user.email }).select({
       password: false,
       __v: false,
-      posts:false,
+      posts: false,
       _id: false,
-      id: false
-    });;
+      id: false,
+    });
     newPost["author"] = user;
     const post = await Post.create(newPost);
     await User.updateOne({ _id: req.user._id }, { $push: { posts: post } });
