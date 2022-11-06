@@ -201,7 +201,8 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
  }......
  ```
  ### Update Post
- *// updates the state of the blog from draft to published or uodate post many contents
+ *// updates the state of the blog from draft to published or uodate post many contents*
+ *//req.user must be owner of post*
  * Route: /post/:slug
  * Method: PUT
  * Header
@@ -224,7 +225,8 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
    "message": "post updated successfully",
  }
  ```
-### Update Post
+### Delete Post
+ *//req.user must be owner of post*
  * Route: /post/:slug
  * Method: DELETE
  * Header
@@ -255,9 +257,6 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
                 "lastname": "userZ",
                 "username": "user1",
                 "email": "user1@mail.com",
-                "password": "Password0!",
-                "createdAt": 1667700918841,
-                "updatedAt": 1667700918841
             },
             "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
             "tags": [
@@ -270,7 +269,6 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
             "state": "published",
             "publishedAt": "2022-11-06T02:15:18.841Z",
             "createdAt": "2022-11-06T02:15:18.841Z",
-            "__v": 0,
             "updatedAt": "2022-11-06T02:15:18.981Z",
             "description": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
             "slug": "sunt-aut-facere-repellat-provident-occaecati-excepturi-optio-reprehenderit-636718b62bf8c8fa24517067"
@@ -283,9 +281,6 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
                 "lastname": "userZ",
                 "username": "user1",
                 "email": "user1@mail.com",
-                "password": "Password0!",
-                "createdAt": 1667700918841,
-                "updatedAt": 1667700918841
             },
             "title": "This is our time. it has arrived",
             "tags": [
@@ -297,7 +292,6 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
             "readingTime": 6,
             "state": "draft",
             "createdAt": "2022-11-06T02:15:18.841Z",
-            "__v": 0,
             "updatedAt": "2022-11-06T02:15:18.984Z",
             "description": "eum et est occaecati",
             "slug": "eum-et-est-occaecati-636718b62bf8c8fa24517069"
@@ -306,7 +300,7 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
  ### Update User
  */allows users to update their profiles(req.user.email must equal profile.email)*
  * Route: /update-profile
- * Method: UPDATE
+ * Method: POST
  * Header
    - Authorization: Bearer {token}
  * Responses: Success
