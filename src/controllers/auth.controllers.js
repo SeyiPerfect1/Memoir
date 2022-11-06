@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const passport = require("passport");
-const User = require('../models/user.models');
+const User = require("../models/user.models");
 
 //create new user
 const userSignUp = async function (req, res, next) {
@@ -42,31 +42,30 @@ const userLogin = async (req, res, next) => {
 
 //change password
 // handles the change password request
-const changePassword = async  (req, res) => {
+const changePassword = async (req, res) => {
   const userInfo = req.body;
-  await User.findOne({ username: userInfo.username }, (err, user) => {
+  await User.findOne({ email: req.user.email }, (err, user) => {
     if (err) {
-      next(err)
-    } else if (user.email===req.user.email) {
-      user.changePassword(
-        userInfo.password,
-        userInfo.new_password,
-        (err, user) => {
-          if (err) {
-            res.status(500).send(err);
-          } else {
-            res.json({
-              success: "Password changed successfully!",
-            });
-          }
-        }
-      );
+      next(err);
     }
+    user.changePassword(
+      userInfo.password,
+      userInfo.new_password,
+      (err, user) => {
+        if (err) {
+          res.status(500).send(err);
+        } else {
+          res.json({
+            success: "Password changed successfully!",
+          });
+        }
+      }
+    );
   });
 };
 
 module.exports = {
   userSignUp,
   userLogin,
-  changePassword
+  changePassword,
 };
