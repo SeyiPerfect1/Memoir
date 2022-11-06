@@ -4,10 +4,10 @@ const postController = require("../controllers/post.controllers");
 
 const postRouter = express.Router();
 
+postRouter.get("/", postController.getPosts);
 
-postRouter.get("/:slug", postController.getPosts);
-
-postRouter.get("/", postController.getPost);
+//router to get a specific post by supplying post slug or id
+postRouter.get("/:slug", postController.getPost);
 
 postRouter.post(
   "/",
@@ -19,6 +19,12 @@ postRouter.put(
   "/:slug",
   passport.authenticate("jwt", { session: false }),
   postController.updatePost
+);
+
+postRouter.delete(
+  "/:slug",
+  passport.authenticate("jwt", { session: false }),
+  postController.deletePost
 );
 
 module.exports = postRouter;
