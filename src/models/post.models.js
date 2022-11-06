@@ -9,7 +9,7 @@ const options = {
 mongoose.plugin(slug, options);
 
 const PostSchema = new Schema({
-  author: { required: true },
+  author: {},
   title: {
     type: String,
     max: 75,
