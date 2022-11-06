@@ -23,7 +23,7 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
  * Download all dependecies using npm install
  * run npm run start <hr>
 ## Base URL
- * [Link to api]() <hr>
+ * [Link to api](https://memoirblog.onrender.com/) <hr>
 ## Models <br>
 ### users
 | field	| data_type	| constraints | validation |
