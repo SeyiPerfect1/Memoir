@@ -113,10 +113,10 @@ const getPost = async (req, res, next) => {
   const { slug } = req.params;
   try {
     const post = await Post.findOne({ slug: slug });
-    if (!post){
+    if (!post) {
       res.json({
-        message: "post not found"
-      })
+        message: "post not found",
+      });
     }
     post.readCount = post.readCount + 1;
     await post.save();
@@ -160,18 +160,18 @@ const createPost = async (req, res, next) => {
   try {
     //add author
     const user = await User.findOne({ email: req.user.email });
-    console.log(user)
+    console.log(user);
     delete user.password;
     delete user.posts;
     const author = {
-      _id : user["_id"],
+      _id: user["_id"],
       firstname: user["firstname"],
       lastname: user["lastname"],
       username: user["username"],
       email: user["email"],
       intro: user["intro"],
-      urlTomage: user["urlToimage"]
-    }
+      urlTomage: user["urlToimage"],
+    };
     newPost["author"] = author;
     const post = await Post.create(newPost);
     await User.updateOne({ _id: req.user._id }, { $push: { posts: post } });
@@ -209,7 +209,7 @@ const updatePost = async (req, res, next) => {
   try {
     // const user = await User.findOne({ _id: req.user._id });
     const post = await Post.findOne({ slug: slug });
-    if ((post.author._id = req.user._id)) {
+    if (post.author.email === req.user.email) {
       await Post.updateOne({ slug: slug }, { $set: postUpdate });
       res.status(200).json({
         message: "post updated successfully",
@@ -226,28 +226,26 @@ const updatePost = async (req, res, next) => {
 
 const deletePost = async (req, res, next) => {
   const { slug } = req.params;
-  console.log(slug);
+
   try {
     const user = await User.findOne({ _id: req.user._id });
     const post = await Post.findOne({ slug: slug });
 
-    console.log(post);
     const index = user.posts.indexOf(post._id);
-    console.log(index);
-    // if (post.author._id === req.user._id)) {
-    // await post.deleteOne({ slug: slug });
-    //   //remove deleted post id from user.posts
-    //   const index = user.posts.indexOf(post._id);
-    //   console.log(index);
-    //   user.posts.splice(index, 1);
-    //   res.status(200).json({
-    //     message: "Post deleted successfully",
-    //   });
-    // } else {
-    //   res.status(401).json({
-    //     message: "user is not the owner of post, user cannot delete post",
-    //   });
-    // }
+    if (post.author.email === req.user.email) {
+      await post.deleteOne({ slug: slug });
+      //remove deleted post id from user.posts
+      const index = user.posts.indexOf(post._id);
+      user.posts.splice(index, 1);
+      await user.save();
+      res.status(200).json({
+        message: "Post deleted successfully",
+      });
+    } else {
+      res.status(401).json({
+        message: "user is not the owner of post, user cannot delete post",
+      });
+    }
   } catch (err) {
     next(err);
   }
