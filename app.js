@@ -4,7 +4,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const { changePassword } = require("./src/controllers/auth.controllers");
-
+const helmet = require("helmet")
 const authRouter = require("./src/routes/auth.routes");
 const userRouter = require("./src/routes/user.routes");
 const postRouter = require("./src/routes/post.routes.js");
@@ -14,8 +14,8 @@ const app = express();
 //use passport middleware
 require("./src/middlewares/auth");
 
-//security middleware
-// app.use(helmet());
+// security middleware
+app.use(helmet());
 
 //use logger middleware
 app.use(logger("dev"));
