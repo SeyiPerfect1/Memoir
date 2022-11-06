@@ -193,6 +193,11 @@ const updatePost = async (req, res, next) => {
   if (postUpdate.readingTime) {
     delete postUpdate.readingTime;
   }
+//check if update consists of changing state to pushided.
+//if true, add publishedAt
+  if(postUpdate.publishedAt === "published"){
+    postUpdate.publishedAt = Date.now()
+  }
 
   //calculate reading time
   if (postUpdate.body) {
