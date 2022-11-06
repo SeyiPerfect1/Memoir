@@ -159,20 +159,14 @@ const createPost = async (req, res, next) => {
   newPost.readingTime = reading_time;
   try {
     //add author
-    const user = await User.findOne({ email: req.user.email });
-    console.log(user);
-    delete user.password;
-    delete user.posts;
-    const author = {
-      _id: user["_id"],
-      firstname: user["firstname"],
-      lastname: user["lastname"],
-      username: user["username"],
-      email: user["email"],
-      intro: user["intro"],
-      urlTomage: user["urlToimage"],
-    };
-    newPost["author"] = author;
+    const user = await User.findOne({ email: req.user.email }).select({
+      password: false,
+      __v: false,
+      posts:false,
+      _id: false,
+      id: false
+    });;
+    newPost["author"] = user;
     const post = await Post.create(newPost);
     await User.updateOne({ _id: req.user._id }, { $push: { posts: post } });
     res.status(201).json({
