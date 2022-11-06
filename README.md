@@ -248,7 +248,7 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
  ### Get User's Post(s) and Details
  *//shows only published posts of req.user!=logged in user*
  *//shows both published and draft posts if req.user === logged in user*
- *//?state=published to filter user posts by state*
+ *//if req.user === logged in user*, user can filter their posts by state using this endpoint: ?state=published to filter user posts by state*
  * Route: /:username
  * Method: GET
  * Header
