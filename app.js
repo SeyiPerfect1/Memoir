@@ -44,12 +44,18 @@ app.get("/", (req, res) => {
 });
 
 //change password route
-app.post("/change-password", passport.authenticate("jwt", { session: false }), changePassword);
+app.post(
+  "/change-password",
+  passport.authenticate("jwt", { session: false }),
+  changePassword
+);
 
 //unavailable resources route
 app.get("*", (req, res) => {
   try {
-    res.sendFile(path.join(__dirname, "./src/public/error.html"));
+    res.json({
+      message: "No page found, check url!!!",
+    });
   } catch (error) {
     next(error);
   }
