@@ -6,15 +6,15 @@ mongoose.connect(
   process.env.MONGODB_URI
 );
 // const posts = require("./stubs/posts");
-const users = require("./stubs/users");
+// const users = require("./stubs/users");
 
 // const Posts = require('../src/models/post.models');
-const User = require("../src/models/user.models");
+// const User = require("../src/models/user.models");
 
-User.collection.drop();
+// Posts.collection.drop();
 // Event.collection.drop();
 
-User.create(users)
+Posts.create(posts)
   .then((user) => {
     console.log(`${user.length} users created`);
   })
