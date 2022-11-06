@@ -9,7 +9,7 @@ const options = {
 mongoose.plugin(slug, options);
 
 const PostSchema = new Schema({
-  author: {},
+  author: { required: true },
   title: {
     type: String,
     max: 75,
@@ -44,7 +44,7 @@ const PostSchema = new Schema({
     type: String,
     slug: ["title", "_id"],
     unique: true,
-    lowercase: true
+    lowercase: true,
   },
   createdAt: {
     type: Date,
@@ -74,14 +74,12 @@ PostSchema.pre("save", function (next) {
   next();
 });
 
-PostSchema.pre('updateOne', { document: true, query: false }, function (next) {
+PostSchema.pre("updateOne", { document: true, query: false }, function (next) {
   if (!this.description) {
     this.description = this.get("title");
   }
-  console.log('updating')
-  next()
-})
-
-
+  console.log("updating");
+  next();
+});
 
 module.exports = mongoose.model("Posts", PostSchema);
