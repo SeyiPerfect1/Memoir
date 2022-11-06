@@ -345,5 +345,5 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
  
 ...
 
-Contributor
+Contributor:
 Oluseyi Adeegbe
