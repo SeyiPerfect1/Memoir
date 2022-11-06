@@ -9,10 +9,7 @@ const options = {
 mongoose.plugin(slug, options);
 
 const PostSchema = new Schema({
-  author: {
-    type: Schema.Types.ObjectId,
-    ref: "Users",
-  },
+  author: {},
   title: {
     type: String,
     max: 75,
@@ -32,7 +29,7 @@ const PostSchema = new Schema({
     default: 0,
   },
   readingTime: {
-    type: String,
+    type: Number,
     required: true,
   },
   state: {
@@ -47,6 +44,7 @@ const PostSchema = new Schema({
     type: String,
     slug: ["title", "_id"],
     unique: true,
+    lowercase: true
   },
   createdAt: {
     type: Date,
@@ -68,11 +66,22 @@ PostSchema.index({
   publishedAt: 1,
 });
 
+//presave hook to set description to title if description is not provided
 PostSchema.pre("save", function (next) {
   if (!this.description) {
     this.description = this.get("title");
   }
   next();
 });
+
+PostSchema.pre('updateOne', { document: true, query: false }, function (next) {
+  if (!this.description) {
+    this.description = this.get("title");
+  }
+  console.log('updating')
+  next()
+})
+
+
 
 module.exports = mongoose.model("Posts", PostSchema);
