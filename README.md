@@ -23,7 +23,7 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
  * Download all dependecies using npm install
  * run npm run start <hr>
 ## Base URL
- * [Link to api]() <hr>
+ * [Link to api](https://memoirblog.onrender.com/) <hr>
 ## Models <br>
 ### users
 | field	| data_type	| constraints | validation |
@@ -52,7 +52,7 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
 | slug | string | got save by concatenating | None | <hr>
 ## APIs <br>
 ### Signup User <br> 
- * Route: /signup
+ * Route: /accounts/signup
  * Method: POST
  * Body:
  ```
@@ -79,7 +79,7 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
   }
   ```
 ### Login User
- * Route: /login
+ * Route: /accounts/login
  * Method: POST
  * Body:
  ```
@@ -106,7 +106,7 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
  }
  ```
 ### Create Post
- * Route: /orders
+ * Route: /posts
  * Method: POST
  * Header
    - Authorization: Bearer {token}
@@ -310,7 +310,7 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
  *//allows users to update their profiles(req.user.email must equal profile.email)*
  *//user cannot update password and email through this route*
  * Route: /update-profile
- * Method: POST
+ * Method: PUT
  * Header
    - Authorization: Bearer {token}
  * Responses: Success
