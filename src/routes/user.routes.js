@@ -21,7 +21,7 @@ userRouter.put(
 );
 
 //route to delete account
-userRouter.put(
+userRouter.delete(
   "/delete-profile",
   passport.authenticate("jwt", {
     session: false,
