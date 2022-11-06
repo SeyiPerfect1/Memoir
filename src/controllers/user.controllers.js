@@ -2,7 +2,7 @@ const User = require("../models/user.models");
 const Post = require("../models/post.models");
 
 //function to retrieve details of a specific user
-const userProfile = async (req, res, next) => {
+const getUserDetails = async (req, res, next) => {
   const { username } = req.params;
   try {
     const user = await User.findOne({ username: username }).select({
@@ -48,7 +48,7 @@ const updateUser = async (req, res, next) => {
   //password and email update require special methods
   const newDetails = {};
   for (const detail in userDetails) {
-    if (detail != "email" && detail != "password") {
+    if (detail != "email" && detail != "password" && detail != "posts") {
       newDetails[detail] = userDetails[detail];
     }
   }
@@ -78,7 +78,7 @@ const deleteUser = async (req, res, next) => {
 };
 
 module.exports = {
-  userProfile,
+  getUserDetails,
   updateUser,
   deleteUser,
 };
