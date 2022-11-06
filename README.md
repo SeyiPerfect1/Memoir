@@ -310,7 +310,7 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
  *//allows users to update their profiles(req.user.email must equal profile.email)*
  *//user cannot update password and email through this route*
  * Route: /update-profile
- * Method: POST
+ * Method: PUT
  * Header
    - Authorization: Bearer {token}
  * Responses: Success
