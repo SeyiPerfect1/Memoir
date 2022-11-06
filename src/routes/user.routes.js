@@ -7,7 +7,7 @@ const userRouter = express.Router();
 //route to get details/profile fof a user
 userRouter.get(
   "/:username",
-  passport.authenticate("jwt", { session: false, failureRedirect: "/" }),
+  passport.authenticate("jwt", { session: false }),
   userController.getUserDetails
 );
 
@@ -22,7 +22,7 @@ userRouter.put(
 
 //route to delete account
 userRouter.delete(
-  "/delete-profile",
+  "/delete-user",
   passport.authenticate("jwt", {
     session: false,
   }),
