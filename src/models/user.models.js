@@ -61,8 +61,7 @@ const UserSchema = new Schema(
     toJSON: {
       virtuals: true,
       transform: function (doc, ret) {
-        ret.id = ret._id;
-        delete ret.id;
+        ret._id = ret.id
         delete ret.password;
         delete ret.__v;
         return ret;
@@ -81,6 +80,7 @@ UserSchema.pre("save", async function (next) {
   //if password is modified, do nothing
   if(!user.isModified("password")) return next();
 
+  this.email = this.email.toLowerCase();
   //hash password
   const hash = await bcrypt.hash(this.password, 10);
 
