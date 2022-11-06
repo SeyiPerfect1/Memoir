@@ -47,17 +47,18 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
  * Route: /signup
  * Method: POST
  * Body:
-{
+ ```
+ {
   "email": "doe@example.com",
   "password": "Password1",
   "firstname": "jon",
   "lastname": "doe",
   "username": 'jon_doe",
-}
-* Responses
-  Success
-
-{
+ }
+ ```
+ * Responses: Success
+  ```
+  {
     message: 'Signup successful',
     user: {
         "email": "doe@example.com",
@@ -67,76 +68,176 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
         "username": 'jon_doe",
         "posts": []
      }
-}
-Login User
-Route: /login
-Method: POST
-Body:
-{
-  "password": "Password1",
-  "username": 'jon_doe",
-}
-Responses
-Success
+  }
+  ```
+### Login User
+ * Route: /login
+ * Method: POST
+ * Body:
+ ```
+ {
+   "password": "Password1",
+   "email": 'doe@example.com",
+ }
+ ```
+ * Responses: Success
+ ```
+ {
+   "token": "exampletoken&8ofiwhb.fburu276r4ufhwu4.o82uy3rjlfwebj",
+ }
+ ```
+### Create Post
+ * Route: /orders
+ * Method: POST
+ * Header
+   - Authorization: Bearer {token}
+ * Body:
+ ```
+ {
+   "title": "Lorem Ipsum",
+   "description": "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
+   "body": "What is Lorem Ipsum?
+           Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,    when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+   "tags" "Children, Education, Sport"
+ }
+ ```
+ * Responses: Success
+ ```
+ {
+   "message": "post created successfully",
+   "title": "Lorem Ipsum",
+   "slug": "Lorem-Ipsum-6f5ejfjr8hfhrurfurfh83"
+ }
+ ```
+### Get post     
+ *//returns only published post*
+ * Route: /posts/:slug        
+ * Method: GET
+ * Header
+   - Authorization: None
+ * Responses: Success(if slug match post) 
+ ```
+ {
+   "message": {
+        "author": {
+            "firstname": "jon",
+            "lastname": "doe",
+            "username": "jon_doe",
+            "email": "jondoe@mail.com",
+        },
+        "title": "ea molestias quasi exercitationem repellat qui ipsa sit aut",
+        "tags": [
+            "Anker56",
+            "Travel",
+            "Photography"
+        ],
+        "body": "et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut et iusto sed quo iure\nvoluptatem occaecati omnis el
+        "readCount": 1,
+        "readingTime": 5,
+        "state": "published",
+        "description": "ea molestias quasi exercitationem repellat qui ipsa sit aut",
+        "slug": "ea-molestias-quasi-exercitationem-repellat-qui-ipsa-sit-aut-636718b62bf8c8fa24517068"
+    }
+ }
+ ```
+  * Responses: Not Found
+ ```
+ {
+   "message": "post not found"
+ }
+ ```
+### Get Posts     
+ *//returns only published posts*
+ * Route: /posts
+ * Method: GET
+ * Header:
+   - Authorization: None
+ * Query params:
+   - author = "jon_doe"  *//query with username*
+   - title = "lorem ipsum"  *//query post titles and matches any post that has lorem ipsum in its title*
+   - tags  *//eg tags=Children+Sports+Fitness*
+   - start date  *//start=2022/11/01,end=2022/11/05*
+ * order_by(sort): 
+   - default(publishedAt: desc}  
+   - readCount
+   - readingTime
+ * page = (default: 1) *//can select any e.g page = 3*
+ * limit = (default: 20) *//can limit to any value e.g limit = 5*
+ * *// example url:  http://localhost:4000/author=john_doe&tags=Children+Sports+Fitness&title=Lorem+ipsum&order_by=publishedAt+desc,readCount+asc,readingTime+desc*
+ * Responses: Success
+ ```
+ {
+   "message": {
+        "author": {
+            "firstname": "jon",
+            "lastname": "doe",
+            "username": "jon_doe",
+            "email": "jondoe@mail.com",
+        },
+        "title": "ea molestias quasi exercitationem repellat qui ipsa sit aut",
+        "tags": [
+            "Anker56",
+            "Travel",
+            "Photography"
+        ],
+        "body": "et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut et iusto sed quo iure\nvoluptatem occaecati omnis el
+        "readCount": 1,
+        "readingTime": 5,
+        "state": "published",
+        "description": "ea molestias quasi exercitationem repellat qui ipsa sit aut",
+        "slug": "ea-molestias-quasi-exercitationem-repellat-qui-ipsa-sit-aut-636718b62bf8c8fa24517068"
+    }
+ }......
+ ```
+ ### Update Post
+ *// updates the state of the blog from draft to published or uodate post many contents
+ * Route: /post/:slug
+ * Method: PUT
+ * Header
+   - Authorization: Bearer {token}
+ * Body:
+ ```
+ { 
+   "state" "publushed"
+   *//or update other post metadata at the same time*
+   "title": "Lorem Ipsum",
+   "description": "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
+   "body": "What is Lorem Ipsum?
+           Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,    when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+   "tags" "Children, Education, Sport"
+ }
+ ```
+ * Responses: Success
+ ```
+ {
+   "message": "post updated successfully",
+ }
+ ```
+### Update Post
+ * Route: /post/:slug
+ * Method: DELETE
+ * Header
+   - Authorization: Bearer {token}
+ * Responses: Success
+ ```
+ {
+   "message": "post deleted successfully",
+ }
+ ```
+ ### Get User Post(s) and Details
+ * Route: /user/:username
+ * Method: GET
+ * Header
+   - Authorization: Bearer {token}
+ * Responses: Success
+ ```
+ {
+   "message": "post deleted successfully",
+ }
+ ```
+ 
 
-{
-    message: 'Login successful',
-    token: 'sjlkafjkldsfjsd'
-}
-Create Order
-Route: /orders
-Method: POST
-Header
-Authorization: Bearer {token}
-Body:
-{
-    items: [{ name: 'chicken pizza', price: 900, size: 'm', quantity: 1}]
-}
-Responses
-Success
-
-{
-    state: 1,
-    total_price: 900,
-    created_at: Mon Oct 31 2022 08:35:00 GMT+0100,
-    items: [{ name: 'chicken pizza', price: 900, size: 'm', quantity: 1}]
-}
-Get Order
-Route: /orders/:id
-Method: GET
-Header
-Authorization: Bearer {token}
-Responses
-Success
-
-{
-    state: 1,
-    total_price: 900,
-    created_at: Mon Oct 31 2022 08:35:00 GMT+0100,
-    items: [{ name: 'chicken pizza', price: 900, size: 'm', quantity: 1}]
-}
-Get Orders
-Route: /orders
-Method: GET
-Header:
-Authorization: Bearer {token}
-Query params:
-page (default: 1)
-per_page (default: 10)
-order_by (default: created_at)
-order (options: asc | desc, default: desc)
-state
-created_at
-Responses
-Success
-
-{
-    state: 1,
-    total_price: 900,
-    created_at: Mon Oct 31 2022 08:35:00 GMT+0100,
-    items: [{ name: 'chicken pizza', price: 900, size: 'm', quantity: 1}]
-}
 ...
 
 Contributor
-Daniel Adesoji
+Oluseyui Adeegbe
