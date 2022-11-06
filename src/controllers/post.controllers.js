@@ -3,47 +3,31 @@ const User = require("../models/user.models");
 const dayjs = require("dayjs");
 const readingTime = require("../utils/reading_time");
 
-
-//function to get a specific post
-const getPost = async (req, res, next) => {
-  const { slug, id } = req.params;
-  try {
-    const post = await Post.findOne(
-      { $or: [ { id: id }, { slug: slug}] }
-    );
-    console.log(post)
-    post.readCount = post.readCount+1;
-    await post.save()
-    
-    res.status(200).json({
-      message: post,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-
 //function to get posts
 const getPosts = async (req, res, next) => {
   //destructure query parameters
-  const { pageNo, limit, order_by, tags, title, author, start, end } =
+  const { page, limit, id, order_by, tags, title, author, start, end } =
     req.query;
 
   //deduct 1 from the page no before multiplying with the limit value
   //if page is not provided in query, set to 0
-  const page = pageNo - 1 || 0;
+  const pageNO = parseInt(page) - 1 || 0;
 
   const findQuery = [];
   //check if author or title or tag is not provided in query params
   //if none is provided pass in an empty string
-  if (!author && !title && !tags) {
+  if (!author && !title && !tags && !id) {
     findQuery.push({});
   }
   //if author is provided as a query params
   //set the query in an object and push into the findquery array
   if (author) {
-    const userDetails = await User.findOne({ username: author });
-    findQuery.push({ author: userDetails.username });
+    findQuery.push({ "author.username": author });
+  }
+
+  //check for id
+  if (id) {
+    findQuery.push({ id: { $regex: `${id}`, $options: "i" } });
   }
 
   //if title is provided as a query params
@@ -70,7 +54,7 @@ const getPosts = async (req, res, next) => {
     findQuery.push({
       publishedAt: {
         $gt: dayjs(startDate).startOf("day"),
-        $lt: moment(endDate).endOf("day"),
+        $lt: dayjs(endDate).endOf("day"),
       },
     });
   }
@@ -82,29 +66,36 @@ const getPosts = async (req, res, next) => {
   //where "," separates the sort attributes
   //while "+" separtes the field used for the sort and the sorting value
   const sortQuery = {};
+
   if (order_by) {
-    const sortAttributes = order_by.split(",");
+    sortAttributes = order_by.split(",");
+
     for (const attribute of sortAttributes) {
       const sortField = attribute.split(" ")[0];
       const sortValue = attribute.split(" ")[1];
       if (sortValue === "asc") {
         sortQuery[sortField] = 1;
+        if (sortField === "publishedAt") {
+          sortQuery[sortField] = -1;
+        }
       }
 
       if (sortValue === "desc") {
         sortQuery[sortField] = -1;
+        if (sortField === "publishedAt") {
+          sortQuery[sortField] = 1;
+        }
       }
     }
-
-    if (!sortAttributes.includes("datePublished")) {
-      sortQuery.dataPublished = -1;
-    }
+  }
+  if (!order_by) {
+    sortQuery.publishedAt = -1;
   }
 
   try {
     //check if only one else set agrregation pipeline to achieve and filtering
     const post = await Post.find({ $or: findQuery, state: "published" })
-      .skip(page * limit || page * 20)
+      .skip(pageNO * limit || pageNO * 20)
       .limit(limit || 20)
       .sort(sortQuery)
       .select({ __v: false });
@@ -112,6 +103,31 @@ const getPosts = async (req, res, next) => {
       result: `${post.length} result(s) found`,
       message: post,
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+//function to get a specific post
+const getPost = async (req, res, next) => {
+  const { slug } = req.params;
+  try {
+    const post = await Post.findOne({ slug: slug });
+    post.readCount = post.readCount + 1;
+    await post.save();
+    if (post.state === "published") {
+      res.status(200).json({
+        message: post,
+      });
+    } else if (post.author._id === req.user._id) {
+      res.status(200).json({
+        message: post,
+      });
+    } else {
+      res.status(404).json({
+        message: "post not found",
+      });
+    }
   } catch (err) {
     next(err);
   }
@@ -125,12 +141,33 @@ const createPost = async (req, res, next) => {
   const tags = req.body.tags.replace(/\s/g, "").split(",");
   newPost.tags = tags;
 
+  //user should not be able to set readCount and readinTime of post
+  if (newPost.readCount) {
+    delete newPost.readCount;
+  }
+  if (newPost.readingTime) {
+    delete newPost.readingTime;
+  }
+
   //calculate reading time
   const reading_time = await readingTime(newPost.body);
   newPost.readingTime = reading_time;
-
   try {
-    newPost.author = req.user._id;
+    //add author
+    const user = await User.findOne({ email: req.user.email });
+    console.log(user)
+    delete user.password;
+    delete user.posts;
+    const author = {
+      _id : user["_id"],
+      firstname: user["firstname"],
+      lastname: user["lastname"],
+      username: user["username"],
+      email: user["email"],
+      intro: user["intro"],
+      urlTomage: user["urlToimage"]
+    }
+    newPost["author"] = author;
     const post = await Post.create(newPost);
     await User.updateOne({ _id: req.user._id }, { $push: { posts: post } });
     res.status(201).json({
@@ -143,44 +180,67 @@ const createPost = async (req, res, next) => {
 
 //function to update post
 const updatePost = async (req, res, next) => {
-  const { slug, id } = req.query;
-  const newPost = req.body;
+  const { slug } = req.params;
+  const postUpdate = req.body;
 
   //seperate tags(coming as strings) into array
   const tags = req.body.tags.replace(/\s/g, "").split(",");
-  newPost.tags = tags;
+  postUpdate.tags = tags;
+
+  //readCount and radingTime should can not be updated by the user
+  if (postUpdate.readCount) {
+    delete postUpdate.readCount;
+  }
+  if (postUpdate.readingTime) {
+    delete postUpdate.readingTime;
+  }
 
   //calculate reading time
-  if (newPost.body) {
-    const reading_time = await readingTime(newPost.body);
-    newPost.readingTime = reading_time;
-  }
-
-  if (newPost["state"] !== undefined) {
-    if (newPost["state"] === "draft") {
-      newPost["publishedAt"] = Date.now();
-    }
-  }
-
-  let query = [];
-  if (slug) {
-    query.push({ slug: slug });
-  }
-  if (id) {
-    query.push({ _id: id });
+  if (postUpdate.body) {
+    const reading_time = await readingTime(postUpdate.body);
+    postUpdate.readingTime = reading_time;
   }
 
   try {
-    await Post.updateOne(
-      { $or: { slug: slug, _id: id } },
-      { $set: { newPost } }
-    );
-    res.status(200).json({
-      message: "post updated successfully",
-    });
-    // else {
+    // const user = await User.findOne({ _id: req.user._id });
+    const post = await Post.findOne({ slug: slug });
+    if ((post.author._id = req.user._id)) {
+      await Post.updateOne({ slug: slug }, { $set: postUpdate });
+      res.status(200).json({
+        message: "post updated successfully",
+      });
+    } else {
+      res.status(401).json({
+        message: "user is not the owner of post, user cannot update post",
+      });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deletePost = async (req, res, next) => {
+  const { slug } = req.params;
+  console.log(slug);
+  try {
+    const user = await User.findOne({ _id: req.user._id });
+    const post = await Post.findOne({ slug: slug });
+
+    console.log(post);
+    const index = user.posts.indexOf(post._id);
+    console.log(index);
+    // if (post.author._id === req.user._id)) {
+    // await post.deleteOne({ slug: slug });
+    //   //remove deleted post id from user.posts
+    //   const index = user.posts.indexOf(post._id);
+    //   console.log(index);
+    //   user.posts.splice(index, 1);
+    //   res.status(200).json({
+    //     message: "Post deleted successfully",
+    //   });
+    // } else {
     //   res.status(401).json({
-    //     message: "user is not the owner of post, user cannot update it",
+    //     message: "user is not the owner of post, user cannot delete post",
     //   });
     // }
   } catch (err) {
@@ -193,4 +253,5 @@ module.exports = {
   createPost,
   updatePost,
   getPost,
+  deletePost,
 };
