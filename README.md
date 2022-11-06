@@ -52,7 +52,7 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
 | slug | string | got save by concatenating | None | <hr>
 ## APIs <br>
 ### Signup User <br> 
- * Route: /signup
+ * Route: /accounts/signup
  * Method: POST
  * Body:
  ```
@@ -79,7 +79,7 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
   }
   ```
 ### Login User
- * Route: /login
+ * Route: /accounts/login
  * Method: POST
  * Body:
  ```
@@ -106,7 +106,7 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
  }
  ```
 ### Create Post
- * Route: /orders
+ * Route: /posts
  * Method: POST
  * Header
    - Authorization: Bearer {token}
