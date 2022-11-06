@@ -86,6 +86,17 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
    "token": "exampletoken&8ofiwhb.fburu276r4ufhwu4.o82uy3rjlfwebj",
  }
  ```
+ ### Home Page
+ * Route: /
+ * Method: GET
+ * Header
+   - Authorization: None
+ * Responses: Success
+ ```
+ {
+   "message": "Welcome home",
+ }
+ ```
 ### Create Post
  * Route: /orders
  * Method: POST
@@ -225,19 +236,111 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
  }
  ```
  ### Get User Post(s) and Details
- * Route: /user/:username
+ *//shows only published posts of req.user!=logged in user*
+ *//shows both published and dradt posts if req.user === logged in user*
+ * Route: /:username
  * Method: GET
  * Header
    - Authorization: Bearer {token}
  * Responses: Success
  ```
  {
-   "message": "post deleted successfully",
+    "message": "user1 has 2 post(s)",
+    "post": [
+        {
+            "_id": "636718b62bf8c8fa24517067",
+            "author": {
+                "_id": "6367116e679244141511f084",
+                "firstname": "userA",
+                "lastname": "userZ",
+                "username": "user1",
+                "email": "user1@mail.com",
+                "password": "Password0!",
+                "createdAt": 1667700918841,
+                "updatedAt": 1667700918841
+            },
+            "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+            "tags": [
+                "Anker60",
+                "Soundcore60"
+            ],
+            "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et 
+            "readCount": 0,
+            "readingTime": 7,
+            "state": "published",
+            "publishedAt": "2022-11-06T02:15:18.841Z",
+            "createdAt": "2022-11-06T02:15:18.841Z",
+            "__v": 0,
+            "updatedAt": "2022-11-06T02:15:18.981Z",
+            "description": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+            "slug": "sunt-aut-facere-repellat-provident-occaecati-excepturi-optio-reprehenderit-636718b62bf8c8fa24517067"
+        },
+        {
+            "_id": "636718b62bf8c8fa24517069",
+            "author": {
+                "_id": "6367116e679244141511f084",
+                "firstname": "userA",
+                "lastname": "userZ",
+                "username": "user1",
+                "email": "user1@mail.com",
+                "password": "Password0!",
+                "createdAt": 1667700918841,
+                "updatedAt": 1667700918841
+            },
+            "title": "This is our time. it has arrived",
+            "tags": [
+                "Family",
+                "Health"
+            ],
+            "body": "ullam et saepe reiciendis voluptatem adipisci\nsit amet autem ullam et saepe reiciendis voluptatem adipisci\nsit amet autem ullam et saepe reiciendis voluptatem adipisci\nsit amet autem ullam et saepe reiciendis voluptatem adipisci\nsit amet autem ullam et saepe reiciendis voluptatem adipisci\nsit amet autem ullam et saepe reiciendis voluptatem adipisci\nsit amet autem ullam et saepe reiciendis voluptatem adipisci\nsit amet autem ullam et saepe reiciendis voluptatem 
+            "readCount": 2,
+            "readingTime": 6,
+            "state": "draft",
+            "createdAt": "2022-11-06T02:15:18.841Z",
+            "__v": 0,
+            "updatedAt": "2022-11-06T02:15:18.984Z",
+            "description": "eum et est occaecati",
+            "slug": "eum-et-est-occaecati-636718b62bf8c8fa24517069"
+        },
+ ```
+ ### Update User
+ */allows users to update their profiles(req.user.email must equal profile.email)*
+ * Route: /update-profile
+ * Method: UPDATE
+ * Header
+   - Authorization: Bearer {token}
+ * Responses: Success
+ ```
+ {
+   "message": "user details updated successfully",
+ }
+ ```
+  ### Delete User
+ */allows users to delete their profiles(req.user.email must equal profile.email)*
+ * Route: /delete-user
+ * Method: DELETE
+ * Header
+   - Authorization: Bearer {token}
+ * Responses: Success
+ ```
+ {
+   "message": "user deleted successfully",
+ }
+ ```
+   ### Change Password
+ */allows users change their password(req.user.email must equal profile.email)*
+ * Route: /change-profile
+ * Method: PUT
+ * Header
+   - Authorization: Bearer {token}
+ * Responses: Success
+ ```
+ {
+   "message": "password changed successfully",
  }
  ```
  
-
 ...
 
 Contributor
-Oluseyui Adeegbe
+Oluseyi Adeegbe
