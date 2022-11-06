@@ -53,7 +53,7 @@ app.post(
 //unavailable resources route
 app.get("*", (req, res) => {
   try {
-    res.json({
+    res.status(404).json({
       message: "No page found, check url!!!",
     });
   } catch (error) {
