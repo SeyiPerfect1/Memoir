@@ -220,11 +220,11 @@ const updatePost = async (req, res, next) => {
       await Post.updateOne({ slug: slug }, { $set: postUpdate });
       res.status(200).json({
         message: "post updated successfully",
+        publishedAt: post.publishedAt,
       });
     } else {
       res.status(401).json({
         message: "user is not the owner of post, user cannot update post",
-        publishedAt: post.publishedAt,
       });
     }
   } catch (err) {
