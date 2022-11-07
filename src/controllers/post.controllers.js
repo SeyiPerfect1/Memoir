@@ -112,7 +112,7 @@ const getPosts = async (req, res, next) => {
 const getPost = async (req, res, next) => {
   const { slug } = req.params;
   try {
-    const post = await Post.findOne({ slug: slug });
+    const post = await Post.findOne({ slug: slug.toLowerCase() });
     if (!post) {
       res.json({
         message: "post not found",
@@ -120,11 +120,9 @@ const getPost = async (req, res, next) => {
     }
     post.readCount = post.readCount + 1;
     await post.save();
+    console.log(req.user);
+
     if (post.state === "published") {
-      res.status(200).json({
-        message: post,
-      });
-    } else if (post.author.email === req.user.email) {
       res.status(200).json({
         message: post,
       });
@@ -148,15 +146,23 @@ const createPost = async (req, res, next) => {
   const newPost = req.body;
 
   //seperate tags(coming as strings) into array
-  const tags = req.body.tags.replace(/\s/g, "").split(",");
-  newPost.tags = tags;
+  if (newPost.tags) {
+    const tags = req.body.tags.replace(/\s/g, "").split(",");
+    newPost.tags = tags;
+  }
 
-  //user should not be able to set readCount and readinTime of post
+  //user should not be able to set readCount and readingTime of post
   if (newPost.readCount) {
     delete newPost.readCount;
   }
+  //readingTime is calculated automatically from body
   if (newPost.readingTime) {
     delete newPost.readingTime;
+  }
+  //state is default to draft
+  if (newPost.state) {
+    newPost.state = newPost.state.toLowerCase();
+    newPost.publishedAt = Date.now();
   }
 
   //calculate reading time
@@ -168,8 +174,8 @@ const createPost = async (req, res, next) => {
       password: false,
       __v: false,
       posts: false,
-      _id: false,
       id: false,
+      updatedAt: false,
     });
     newPost["author"] = user;
     const post = await Post.create(newPost);
@@ -178,6 +184,9 @@ const createPost = async (req, res, next) => {
       message: "post created successfully",
       title: post.title,
       description: post.description,
+      readCount: post.readCount,
+      readingTime: post.readingTime,
+      state: post.state,
       tags: post.tags,
       slug: post.slug,
     });
@@ -192,8 +201,10 @@ const updatePost = async (req, res, next) => {
   const postUpdate = req.body;
 
   //seperate tags(coming as strings) into array
-  const tags = req.body.tags.replace(/\s/g, "").split(",");
-  postUpdate.tags = tags;
+  if (postUpdate.tags) {
+    const tags = req.body.tags.replace(/\s/g, "").split(",");
+    postUpdate.tags = tags;
+  }
 
   //readCount and radingTime should can not be updated by the user
   if (postUpdate.readCount) {
@@ -204,7 +215,8 @@ const updatePost = async (req, res, next) => {
   }
   //check if update consists of changing state to pushided.
   //if true, add publishedAt
-  if (postUpdate.state === "published") {
+  if (postUpdate.state) {
+    postUpdate.state = postUpdate.state.toLowerCase();
     postUpdate.publishedAt = Date.now();
   }
 
@@ -213,12 +225,21 @@ const updatePost = async (req, res, next) => {
     const reading_time = await readingTime(postUpdate.body);
     postUpdate.readingTime = reading_time;
   }
-
+  postUpdate.updatedAt = Date.now();
   try {
-    // const user = await User.findOne({ _id: req.user._id });
-    const post = await Post.findOne({ slug: slug });
+    const post = await Post.findOne({ slug: slug.toLowerCase() });
+    //create new slug from title
+    if (postUpdate.title) {
+      const titleSlug = postUpdate.title.replaceAll(" ", "-").toLowerCase();
+      const newSlug = titleSlug + "-" + post._id.toString();
+      postUpdate.slug = newSlug;
+    }
+    //create new description, if no description was added on while updating title
+    if (!postUpdate.description && postUpdate.title) {
+      postUpdate.description = postUpdate.title;
+    }
     if (post.author.email === req.user.email) {
-      await Post.updateOne({ slug: slug }, { $set: postUpdate });
+      await Post.updateOne({ slug: slug.toLowerCase() }, { $set: postUpdate });
       res.status(200).json({
         message: "post updated successfully",
         publishedAt: post.publishedAt,
@@ -238,7 +259,7 @@ const deletePost = async (req, res, next) => {
 
   try {
     const user = await User.findOne({ _id: req.user._id });
-    const post = await Post.findOne({ slug: slug });
+    const post = await Post.findOne({ slug: slug.toLowerCase() });
 
     const index = user.posts.indexOf(post._id);
     if (post.author.email === req.user.email) {
