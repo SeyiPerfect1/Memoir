@@ -36,7 +36,7 @@ passport.use(
     async (req, email, password, done) => {
       try {
         let newUser = {};
-        newUser.email = email;
+        newUser.email = email.toLowerCase();
         newUser.password = password;
         newUser.username = req.body.username;
         newUser.firstname = req.body.firstname;
