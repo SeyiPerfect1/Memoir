@@ -20,9 +20,9 @@ const userLogin = async (req, res, next) => {
       }
       if (!user) {
         res.json({
-          message: "username or password is incorrect!!!"
-        })
-        return next()
+          message: "username or password is incorrect!!!",
+        });
+        return next();
       }
 
       req.login(user, { session: false }, async (error) => {
@@ -42,32 +42,7 @@ const userLogin = async (req, res, next) => {
   })(req, res, next);
 };
 
-//change password
-// handles the change password request
-const changePassword = async (req, res) => {
-  const userInfo = req.body;
-  await User.findOne({ email: req.user.email }, (err, user) => {
-    if (err) {
-      next(err);
-    }
-    user.changePassword(
-      userInfo.password,
-      userInfo.new_password,
-      (err, user) => {
-        if (err) {
-          res.status(500).send(err);
-        } else {
-          res.json({
-            success: "Password changed successfully!",
-          });
-        }
-      }
-    );
-  });
-};
-
 module.exports = {
   userSignUp,
   userLogin,
-  changePassword,
 };

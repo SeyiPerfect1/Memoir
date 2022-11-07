@@ -4,7 +4,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const { changePassword } = require("./src/controllers/auth.controllers");
-const helmet = require("helmet")
+const helmet = require("helmet");
 const authRouter = require("./src/routes/auth.routes");
 const userRouter = require("./src/routes/user.routes");
 const postRouter = require("./src/routes/post.routes.js");
@@ -42,13 +42,6 @@ app.get("/", (req, res) => {
     message: "welcome home",
   });
 });
-
-//change password route
-app.post(
-  "/change-password",
-  passport.authenticate("jwt", { session: false }),
-  changePassword
-);
 
 //unavailable resources route
 app.get("*", (req, res) => {
