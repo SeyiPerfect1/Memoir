@@ -74,12 +74,5 @@ PostSchema.pre("save", function (next) {
   next();
 });
 
-PostSchema.pre("updateOne", { document: true, query: false }, function (next) {
-  if (!this.description) {
-    this.description = this.get("title");
-  }
-  console.log("updating");
-  next();
-});
 
 module.exports = mongoose.model("Posts", PostSchema);
