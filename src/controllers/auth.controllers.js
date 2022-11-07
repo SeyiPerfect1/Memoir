@@ -19,8 +19,10 @@ const userLogin = async (req, res, next) => {
         return next(err);
       }
       if (!user) {
-        const error = new Error("username or password is incorrect");
-        return next(error);
+        res.json({
+          message: "username or password is incorrect!!!"
+        })
+        return next()
       }
 
       req.login(user, { session: false }, async (error) => {
