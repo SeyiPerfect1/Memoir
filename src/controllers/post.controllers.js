@@ -124,15 +124,16 @@ const getPost = async (req, res, next) => {
       res.status(200).json({
         message: post,
       });
-    } else if (post.state === "drafts") {
-      res.status(200).json({
-        message: "post not found",
-      });
     } else if (post.author.email === req.user.email) {
       res.status(200).json({
         message: post,
       });
+    } else if (post.state === "draft") {
+      res.status(200).json({
+        message: "post not found",
+      });
     } else {
+      //if post slug is not found
       res.status(404).json({
         message: "post not found",
       });
