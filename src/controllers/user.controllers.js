@@ -24,7 +24,6 @@ const getUserDetails = async (req, res, next) => {
       if (state) {
         filter.state = state;
       }
-      console.log(filter);
       const posts = await Post.find(filter);
       res.status(200).json({
         message: `${username} has ${posts.length} post(s)`,
