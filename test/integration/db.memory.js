@@ -1,22 +1,49 @@
+const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
-const mongoServer = new MongoMemoryServer();
+mongoose.Promise = global.Promise;
 
-exports.dbConnect = async () => {
-  const uri = await mongoServer.getUri();
+class Connection {
+  constructor() {
+    this.mongoServer = MongoMemoryServer.create();
+    this.connection = null;
+  }
 
-  const mongooseOpts = {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-  };
+  async connect() {
+    this.mongoServer = await MongoMemoryServer.create();
+    const mongoUri = this.mongoServer.getUri();
 
-  await mongoose.connect(uri, mongooseOpts);
-};
+    this.connection = await mongoose.connect(mongoUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+  }
 
-exports.dbDisconnect = async () => {
-  await mongoose.connection.dropDatabase();
-  await mongoose.connection.close();
-  await mongoServer.stop();
+  async disconnect() {
+    await mongoose.disconnect();
+    await this.mongoServer.stop();
+  }
+
+  async cleanup() {
+    const models = Object.keys(this.connection.models);
+    const promises = [];
+
+    models.map((model) => {
+      promises.push(this.connection.models[model].deleteMany({}));
+    });
+
+    await Promise.all(promises);
+  }
+}
+
+/**
+ * Create the initial database connection.
+ *
+ * @async
+ * @return {Promise<Object>}
+ */
+exports.connect = async () => {
+  const conn = new Connection();
+  await conn.connect();
+  return conn;
 };
