@@ -13,13 +13,12 @@ const getUserDetails = async (req, res, next) => {
       _id: false,
       id: false,
     });
+
     if (!user) {
-      res.status(404).json({
-        message: "user not found",
-      });
+      res.redirect("/")
     }
 
-    if (user.email === req.user.email) {
+    else if (user.email === req.user.email) {
       const filter = { "author.username": username };
       if (state) {
         filter.state = state;

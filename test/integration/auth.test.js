@@ -12,7 +12,7 @@ describe("POST: Signup and Login", () => {
   });
 
   beforeEach(async () => {
-    await UserModel.create(user[0]);
+    await User.create(user[0]);
   });
 
   afterEach(async () => {
@@ -53,7 +53,7 @@ describe("POST: Signup and Login", () => {
     });
 
     const response = await request(app)
-      .post("/login")
+      .post("/accounts/login")
       .set("content-type", "application/json")
       .send({
         username: user1[0].username,
