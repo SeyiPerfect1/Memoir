@@ -15,6 +15,5 @@ test("verify json web token", async () => {
     expect(decoded).toBeDefined();
     expect(decoded.id).toBe(payload.id);
     expect(decoded.email).toBe(payload.email);
-
 })
 
