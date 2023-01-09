@@ -331,18 +331,6 @@ As part of [AltschoolAfrica](https://altschoolafrica.com) second semester examin
    "message": "user deleted successfully",
  }
  ```
-   ### Change Password
- */allows users change their password(req.user.email must equal profile.email)*
- * Route: /change-profile
- * Method: PUT
- * Header
-   - Authorization: Bearer {token}
- * Responses: Success
- ```
- {
-   "message": "password changed successfully",
- }
- ```
  
 ...
 
