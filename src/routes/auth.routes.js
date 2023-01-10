@@ -1,19 +1,19 @@
-const auth = require("../controllers/auth.controllers");
-const express = require("express");
-const passport = require("passport");
+const AuthenticationController = require('../controllers/auth.controllers');
+const express = require('express');
+const passport = require('passport');
 
 const authRouter = express.Router();
 
-//user signup route
+//  user signup route
 authRouter.post(
-  "/signup",
-  passport.authenticate("signup", {
-    session: false,
+  '/signup',
+  passport.authenticate('signup', {
+    session: false
   }),
-  auth.userSignUp
+  AuthenticationController.userSignUp
 );
 
-//user Signin route
-authRouter.post("/login", auth.userLogin);
+//  user Signin route
+authRouter.post('/login', AuthenticationController.userLogin);
 
 module.exports = authRouter;

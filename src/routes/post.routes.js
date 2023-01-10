@@ -1,30 +1,36 @@
-const express = require("express");
-const passport = require("passport");
-const postController = require("../controllers/post.controllers");
+const express = require('express');
+const passport = require('passport');
+const PostController = require('../controllers/post.controllers');
 
 const postRouter = express.Router();
 
-postRouter.get("/", postController.getPosts);
+postRouter.get('/', PostController.getPosts);
 
-//router to get a specific post by supplying post slug or id
-postRouter.get("/:slug", postController.getPost);
+//  router to get a specific post by supplying post slug or id
+postRouter.get('/:slug', PostController.getPost);
 
 postRouter.post(
-  "/",
-  passport.authenticate("jwt", { session: false }),
-  postController.createPost
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  PostController.createPost
 );
 
 postRouter.put(
-  "/:slug",
-  passport.authenticate("jwt", { session: false }),
-  postController.updatePost
+  '/:slug',
+  passport.authenticate('jwt', { session: false }),
+  PostController.updatePost
+);
+
+postRouter.put(
+  '/:slug/publish',
+  passport.authenticate('jwt', { session: false }),
+  PostController.publishPost
 );
 
 postRouter.delete(
-  "/:slug",
-  passport.authenticate("jwt", { session: false }),
-  postController.deletePost
+  '/:slug',
+  passport.authenticate('jwt', { session: false }),
+  PostController.deletePost
 );
 
 module.exports = postRouter;

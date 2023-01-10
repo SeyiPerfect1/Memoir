@@ -1,32 +1,46 @@
-const express = require("express");
-const passport = require("passport");
-const userController = require("../controllers/user.controllers");
+const express = require('express');
+const passport = require('passport');
+const UserController = require('../controllers/user.controllers');
 
 const userRouter = express.Router();
 
-//route to get details/profile fof a user
+//  route to get details/profile for a user
 userRouter.get(
-  "/:username",
-  passport.authenticate("jwt", { session: false }),
-  userController.getUserDetails
+  '/:username',
+  passport.authenticate('jwt', { session: false }),
+  UserController.getUserDetails
 );
 
-//route to update details of a user 
+//  route to get a user post
+userRouter.get(
+  '/:username/posts',
+  passport.authenticate('jwt', { session: false }),
+  UserController.getUserPosts
+);
+
+//  route to get details/profile fof a user
+userRouter.get(
+  '/:username/comments',
+  passport.authenticate('jwt', { session: false }),
+  UserController.getUserComments
+);
+
+//  route to update details of a user
 userRouter.put(
-  "/update-profile",
-  passport.authenticate("jwt", {
-    session: false,
+  '/:username',
+  passport.authenticate('jwt', {
+    session: false
   }),
-  userController.updateUser
+  UserController.updateUserDetails
 );
 
-//route to delete account
+//  route to delete account
 userRouter.delete(
-  "/delete-user",
-  passport.authenticate("jwt", {
-    session: false,
+  '/:username',
+  passport.authenticate('jwt', {
+    session: false
   }),
-  userController.deleteUser
+  UserController.deleteUserDetails
 );
 
 module.exports = userRouter;
